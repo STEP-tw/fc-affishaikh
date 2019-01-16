@@ -2,7 +2,8 @@
 <html>
   <head>
     <title>Homepage</title>
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <script src="/src/handleEvents.js"></script>
   </head>
   <body>
     <header>Flower Catalogue</header>
@@ -10,6 +11,11 @@
     <a href="/src/htmlPages/Abeliophyllum.html">Abeliophyllum</a>
     <a href="/src/htmlPages/Ageratum.html">Ageratum</a>
     <a href="/src/htmlPages/Guestbook.html">Guestbook</a>
-    <img src="/src/resources/water_jar.gif" alt="water_jar" />
+    <img
+      src="/src/resources/water_jar.gif"
+      id="water_jar"
+      alt="water_jar"
+      onclick="hideWaterJar()"
+    />
   </body>
 </html>

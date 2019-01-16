@@ -1,6 +1,7 @@
 const fs = require('fs');
 const ENCODING = 'utf8';
 const ABELIOPHYLLUM = './src/htmlPages/Abeliophyllum.html';
+const HANDLE_EVENTS = './src/handleEvents.js';
 const AGERATUM = './src/htmlPages/Ageratum.html';
 const LANDINGPAGE = './src/htmlPages/landingPage.html';
 const GUESTBOOK_HTML = './src/htmlPages/Guestbook.html';
@@ -22,6 +23,7 @@ const app = (req, res) => {
     fs.readFile(LANDINGPAGE, ENCODING, writeHTML);
   }
   if (req.url === '/css/main.css') {
+    res.writeHead(200, { 'Content-Type': 'text/css' });
     fs.readFile(MAIN_CSS, ENCODING, writeHTML);
   }
   if (req.url === '/src/resources/flowers.jpg') {
@@ -38,6 +40,9 @@ const app = (req, res) => {
   }
   if (req.url === '/src/resources/water_jar.gif') {
     fs.readFile(WATER_JAR, writeHTML);
+  }
+  if (req.url === '/src/handleEvents.js') {
+    fs.readFile(HANDLE_EVENTS, ENCODING, writeHTML);
   }
 };
 
