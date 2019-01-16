@@ -4,3 +4,11 @@ header {
     color:blue;
     text-align: center;
 }
+
+img {
+    display: block;
+}
+
+a {
+    display: block;
+}

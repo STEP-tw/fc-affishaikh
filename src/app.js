@@ -1,7 +1,12 @@
 const fs = require('fs');
 const ENCODING = 'utf8';
-const LANDINGPAGE = './src/landingPage.html';
-const MAIN_CSS = './src/main.css';
+const ABELIOPHYLLUM = './src/htmlPages/Abeliophyllum.html';
+const AGERATUM = './src/htmlPages/Ageratum.html';
+const LANDINGPAGE = './src/htmlPages/landingPage.html';
+const GUESTBOOK_HTML = './src/htmlPages/Guestbook.html';
+const MAIN_CSS = './src/css/main.css';
+const FLOWER = './src/resources/flowers.jpg';
+const WATER_JAR = './src/resources/water_jar.gif';
 
 const createHTMLWriter = function(res) {
   return function(err, html) {
@@ -16,8 +21,23 @@ const app = (req, res) => {
   if (req.url === '/') {
     fs.readFile(LANDINGPAGE, ENCODING, writeHTML);
   }
-  if (req.url === '/main.css') {
+  if (req.url === '/css/main.css') {
     fs.readFile(MAIN_CSS, ENCODING, writeHTML);
+  }
+  if (req.url === '/src/resources/flowers.jpg') {
+    fs.readFile(FLOWER, writeHTML);
+  }
+  if (req.url === '/src/htmlPages/Abeliophyllum.html') {
+    fs.readFile(ABELIOPHYLLUM, ENCODING, writeHTML);
+  }
+  if (req.url === '/src/htmlPages/Ageratum.html') {
+    fs.readFile(AGERATUM, ENCODING, writeHTML);
+  }
+  if (req.url === '/src/htmlPages/Guestbook.html') {
+    fs.readFile(GUESTBOOK_HTML, ENCODING, writeHTML);
+  }
+  if (req.url === '/src/resources/water_jar.gif') {
+    fs.readFile(WATER_JAR, writeHTML);
   }
 };
 

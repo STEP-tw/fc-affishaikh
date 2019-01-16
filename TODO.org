@@ -1,1 +1,5 @@
 * UNDER WORK Create a html file to be served using sever. It should have: title, flower images, links and jar.
+* DONE Change the directory structure.
+* DONE Handle the requests for images.
+* DONE Handle the requests for links.
+* UNDER WORK Handle the request for gif and set onclick event on it.
