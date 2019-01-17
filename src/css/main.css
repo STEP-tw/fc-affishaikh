@@ -1,8 +1,13 @@
-header {
+.headings {
     font-family: serif;
     font-size: 40px;
-    color:blue;
-    text-align: center;
+    color:orange;
+    display: inline-block;
+}
+
+.homePageLink {
+    font-size: 40px;
+    display: inline-block;
 }
 
 img {
@@ -10,5 +15,13 @@ img {
 }
 
 a {
+    display: block
+}
+
+.headingDiv {
+    text-align: center;
+}
+
+.inputs {
     display: block;
 }

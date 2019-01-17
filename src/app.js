@@ -7,27 +7,34 @@ const renderFile = function(res, fileContents) {
 };
 
 class Route {
-  constructor(url, resource, handler) {
+  constructor(method, url, resource, handler) {
+    this.method = method;
     this.url = url;
     this.handler = handler;
     this.resource = resource;
   }
 }
 
-const findMatching = function(routes, url) {
-  return routes.filter(route => url === route.url);
+const findMatching = function(routes, req) {
+  return routes.filter(
+    route => req.method === route.method && req.url === route.url
+  );
 };
 
 class App {
   constructor() {
     this.routes = [];
   }
-  addRoute(url, handler, resource) {
-    const route = new Route(url, handler, resource);
+  get(url, resource, handler) {
+    const route = new Route('GET', url, resource, handler);
+    this.routes.push(route);
+  }
+  post(url, resource, handler) {
+    const route = new Route('POST', url, resource, handler);
     this.routes.push(route);
   }
   handleRequest(req, res) {
-    const matchingRoute = findMatching(this.routes, req.url);
+    const matchingRoute = findMatching(this.routes, req);
     if (matchingRoute.length === 0) {
       res.statusCode = 404;
       res.write('File not found');
@@ -41,30 +48,30 @@ class App {
 }
 
 const app = new App();
-app.addRoute('/', './src/htmlPages/landingPage.html', renderFile);
-app.addRoute('/css/main.css', './src/css/main.css', renderFile);
-app.addRoute(
+app.get('/', './src/htmlPages/landingPage.html', renderFile);
+app.get('/css/main.css', './src/css/main.css', renderFile);
+app.get(
   '/src/htmlPages/Abeliophyllum.html',
   './src/htmlPages/Abeliophyllum.html',
   renderFile
 );
-app.addRoute(
+app.get(
   '/src/htmlPages/Ageratum.html',
   './src/htmlPages/Ageratum.html',
   renderFile
 );
-app.addRoute('/src/handleEvents.js', './src/handleEvents.js', renderFile);
-app.addRoute(
+app.get('/src/handleEvents.js', './src/handleEvents.js', renderFile);
+app.get(
   '/src/htmlPages/Guestbook.html',
   './src/htmlPages/Guestbook.html',
   renderFile
 );
-app.addRoute(
+app.get(
   '/src/resources/flowers.jpg',
   './src/resources/flowers.jpg',
   renderFile
 );
-app.addRoute(
+app.get(
   '/src/resources/water_jar.gif',
   './src/resources/water_jar.gif',
   renderFile

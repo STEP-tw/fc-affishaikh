@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Guest Book</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="/css/main.css"
+    />
+    <script src="/src/renderComments.js"></script>
+  </head>
+  <body>
+    <div class="headingDiv">
+      <a class="homePageLink" href="/"><<</a>
+      <header class="headings">Guest Book</header>
+    </div>
+    <form method="POST" action="/src/htmlPages/Guestbook.html">
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" />
+      </div>
+      <div>
+        <label for="comment">Comment:</label>
+        <textarea name="comment" id="comment" cols="30" rows="5"></textarea>
+      </div>
+      <input type="submit" value="Submit" />
+    </form>
+    <div id="comments"></div>
+  </body>
+</html>
