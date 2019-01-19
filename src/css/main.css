@@ -20,8 +20,23 @@ a {
 
 .headingDiv {
     text-align: center;
+    padding: 15px;
+    border-bottom : 2px solid black;
 }
 
 .inputs {
     display: block;
+}
+
+.imageAndDetails {
+    display: flex;
+    margin: 5px;
+}
+
+.imageDetails {
+    margin: auto 5px;
+}
+
+span.bold{
+    font-weight: bold;
 }

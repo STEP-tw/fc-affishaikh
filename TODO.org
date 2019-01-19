@@ -6,4 +6,13 @@
 * DONE Make a framework for the server.
 * DONE Make a Comments class.
 * DONE Write the comments first in comments object and then into file.
+
+* TODO Make a logRequest function.
+* TODO Make a readBody function
+* TODO Make a send not found function.
+* TODO Use Public directory.
 * TODO Make a generic parser.
+
+What is the power of framework?
+    Easy to add new functionalities.
+    No need to write a separate functionality to read the data when a post request comes. Because we already have a readBody function that sends the data in the req.body when it comes.

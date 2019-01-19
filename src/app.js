@@ -15,7 +15,11 @@ const storeCommentInFile = function(commentDetails) {
   parsedComment.name = parsedCommentDetails[0];
   parsedComment.comment = parsedCommentDetails[1];
   comments.allComments.unshift(parsedComment);
-  fs.writeFile('./src/commentsLog.json', JSON.stringify(comments.allComments), () => {});
+  fs.writeFile(
+    './src/commentsLog.json',
+    JSON.stringify(comments.allComments),
+    () => {}
+  );
 };
 
 const renderGuestBook = function(res) {
@@ -127,6 +131,26 @@ app.get(
 app.get(
   '/src/resources/flowers.jpg',
   './src/resources/flowers.jpg',
+  renderFile
+);
+app.get(
+  '/src/resources/abeliophyllum.jpg',
+  './src/resources/abeliophyllum.jpg',
+  renderFile
+);
+app.get(
+  '/src/resources/ageratum.jpg',
+  './src/resources/ageratum.jpg',
+  renderFile
+);
+app.get(
+  '/src/resources/Abeliophyllum.pdf',
+  './src/resources/Abeliophyllum.pdf',
+  renderFile
+);
+app.get(
+  '/src/resources/Ageratum.pdf',
+  './src/resources/Ageratum.pdf',
   renderFile
 );
 app.get(
