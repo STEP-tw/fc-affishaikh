@@ -1,4 +1,5 @@
 const fs = require('fs');
+const comments = require('../server.js');
 
 const parser = function(parameter) {
   parameter = parameter.split('=');
@@ -13,35 +14,28 @@ const storeCommentInFile = function(commentDetails) {
   parsedComment.date = new Date().toLocaleString();
   parsedComment.name = parsedCommentDetails[0];
   parsedComment.comment = parsedCommentDetails[1];
-  fs.readFile('./src/commentsLog.json', (err, data) => {
-    let comments = JSON.parse(data);
-    comments.unshift(parsedComment);
-    fs.writeFile('./src/commentsLog.json', JSON.stringify(comments), () => {});
-  });
+  comments.allComments.unshift(parsedComment);
+  fs.writeFile('./src/commentsLog.json', JSON.stringify(comments.allComments), () => {});
 };
 
 const renderGuestBook = function(res) {
-  console.log('guest book');
   fs.readFile('./src/htmlPages/Guestbook.html', (err, data) => {
     res.statusCode = 200;
     res.write(data);
-    fs.readFile('./src/commentsLog.json', (err, data) => {
-      const comments = JSON.parse(data);
-      for (
-        let commentIndex = 0;
-        commentIndex < comments.length;
-        commentIndex++
-      ) {
-        let comment =
-          comments[commentIndex].date +
-          '\t' +
-          comments[commentIndex].name +
-          '\t' +
-          comments[commentIndex].comment;
-        res.write('<div>' + comment + '</div>');
-      }
-      res.end();
-    });
+    for (
+      let commentIndex = 0;
+      commentIndex < comments.allComments.length;
+      commentIndex++
+    ) {
+      let comment =
+        comments.allComments[commentIndex].date +
+        '\t' +
+        comments.allComments[commentIndex].name +
+        '\t' +
+        comments.allComments[commentIndex].comment;
+      res.write('<div>' + comment + '</div>');
+    }
+    res.end();
   });
 };
 
@@ -100,7 +94,7 @@ class App {
     if (req.method === 'POST') {
       matchingRoute[0].handler(req, res);
     }
-    if(req.method === 'GET' && req.url === '/src/htmlPages/Guestbook.html') {
+    if (req.method === 'GET' && req.url === '/src/htmlPages/Guestbook.html') {
       renderGuestBook(res);
     }
     if (req.method === 'GET' && req.url !== '/src/htmlPages/Guestbook.html') {

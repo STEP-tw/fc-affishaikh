@@ -4,3 +4,6 @@
 * DONE Handle the requests for links.
 * DONE Handle the request for gif and set onclick event on it.
 * DONE Make a framework for the server.
+* DONE Make a Comments class.
+* DONE Write the comments first in comments object and then into file.
+* TODO Make a generic parser.
