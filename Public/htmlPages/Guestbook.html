@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Guest Book</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+  </head>
+  <body>
+    <div class="headingDiv">
+      <a class="homePageLink" href="/"><<</a>
+      <header class="headings">Guest Book</header>
+    </div>
+    <div class="commentsForm">
+      <form method="POST" action="/htmlPages/Guestbook.html">
+        <div class="inputFieldDiv">
+          <label id="name" for="name">Name:</label>
+          <input class="inputField" type="text" name="name" id="name" />
+        </div>
+        <div class="inputFieldDiv">
+          <label id="comment" for="comment">Comment:</label>
+          <textarea class="inputField" name="comment" id="comment" cols="30" rows="5"></textarea>
+        </div>
+        <input class="button" type="submit" value="Submit" />
+      </form>
+    </div>
+  </body>
+</html>

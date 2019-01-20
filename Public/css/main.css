@@ -1,0 +1,76 @@
+.headings {
+  font-family: serif;
+  font-size: 40px;
+  color: orange;
+  display: inline-block;
+}
+
+.landingPageHeading {
+  text-align: right;
+  padding: 10px;
+  padding-right: 250px;
+  border-bottom: 2px solid black;
+}
+
+.imageAndList {
+  margin: 10px;
+  display: flex;
+}
+
+.list {
+  margin: auto;
+}
+
+.commentsForm {
+  margin: 10px;
+}
+
+.inputFieldDiv {
+  margin: 10px;
+  font-size: 20px;
+}
+
+.inputField {
+  font-size: 20px;
+}
+
+.button {
+  font-size: 20px;
+  margin: 10px;
+}
+
+#name {
+  margin-right : 36px;
+}
+
+#comment {
+  margin-right: 6px;
+}
+
+.homePageLink {
+  font-size: 40px;
+  display: inline-block;
+}
+
+.headingDiv {
+  text-align: center;
+  padding: 15px;
+  border-bottom: 2px solid black;
+}
+
+.inputs {
+  display: block;
+}
+
+.imageAndDetails {
+  display: flex;
+  margin: 5px;
+}
+
+.imageDetails {
+  margin: auto 5px;
+}
+
+span.bold {
+  font-weight: bold;
+}
