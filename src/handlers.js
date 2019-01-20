@@ -38,22 +38,20 @@ const send = function(res, statusCode, resource) {
   res.end();
 };
 
-const renderResource = function(req, res, next) {
-  const resourcePath = getResourcePath(req.url);
-  fs.readFile(resourcePath, (err, content) => {
-    let statusCode = 200;
-    let resource = content;
-    if (err) {
-      statusCode = 404;
-      resource = 'File not found';
-    }
-    send(res, statusCode, resource);
-    return;
-  });
+const sendNotFound = function(res) {
+  send(res, 404, 'Not found');
 };
 
-const sendNotFound = function(req, res) {
-  send(res, 404, 'Not found');
+const renderResource = function(req, res, next) {
+  const resourcePath = getResourcePath(req.url);
+  fs.readFile(resourcePath, (err, resource) => {
+    if (err) {
+      sendNotFound(res);
+      return;
+    }
+    send(res, 200, resource);
+    return;
+  });
 };
 
 const reducer = function(parsedDataSoFar, keyAndValue) {
@@ -75,7 +73,7 @@ const storeComment = function(comment, res) {
     './src/comments.json',
     JSON.stringify(comments.allComments),
     () => {
-      res.end();
+      return;
     }
   );
 };
@@ -84,12 +82,35 @@ const submitComment = function(req, res) {
   const comment = parse(req.body);
   comment.date = new Date().toLocaleString();
   storeComment(comment, res);
+  renderGuestbook(req, res);
+};
+
+const appendComments = function(guestBookHtml, comments) {
+  let appendedData = guestBookHtml;
+  for (comment of comments) {
+    appendedData += `<pre>${comment.date}    ${comment.name}    ${
+      comment.comment
+    }</pre>`;
+  }
+  return appendedData;
+};
+
+const renderGuestbook = function(req, res) {
+  fs.readFile('./Public/htmlPages/Guestbook.html', (err, resource) => {
+    if (err) {
+      sendNotFound(res);
+      return;
+    }
+    let appendedData = appendComments(resource, comments.allComments);
+    send(res, 200, appendedData);
+    return;
+  });
 };
 
 app.use(readBody);
 app.use(logRequest);
-app.get(renderResource);
-app.post(submitComment);
-app.use(sendNotFound);
+app.get('/htmlPages/Guestbook.html', renderGuestbook);
+app.post('/htmlPages/Guestbook.html', submitComment);
+app.use(renderResource);
 
 module.exports = app;

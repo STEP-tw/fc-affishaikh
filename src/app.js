@@ -2,6 +2,9 @@ const isMatching = function(route, req) {
   if (route.method && route.method !== req.method) {
     return false;
   }
+  if (route.url && route.url !== req.url) {
+    return false;
+  }
   return true;
 };
 
@@ -16,16 +19,15 @@ class App {
   use(handler) {
     this.routes.push({ handler });
   }
-  get(handler) {
-    this.routes.push({ method: 'GET', handler });
+  get(url, handler) {
+    this.routes.push({ method: 'GET', url, handler });
   }
-  post(handler) {
-    this.routes.push({ method: 'POST', handler });
+  post(url, handler) {
+    this.routes.push({ method: 'POST', url, handler });
   }
   handleRequest(req, res) {
     const matchingRoutes = findMatching(this.routes, req);
     let remaining = [...matchingRoutes];
-    console.log(matchingRoutes);
 
     let next = () => {
       let current = remaining[0];
