@@ -3,6 +3,7 @@
   <head>
     <title>Guest Book</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <script src="/guestBook.js"></script>
   </head>
   <body>
     <div class="headingDiv">
@@ -19,8 +20,12 @@
           <label id="comment" for="comment">Comment:</label>
           <textarea class="inputField" name="comment" id="comment" cols="30" rows="5"></textarea>
         </div>
-        <input class="button" type="submit" value="Submit" />
+        <input class="button" type="submit" value="Submit"/>
       </form>
     </div>
+      <div>
+        <h1 class="commentsHeading">Comments</h1>
+        <button class="reloadButton" id="reloadComments">&#x21bb</button>
+      </div>
   </body>
 </html>

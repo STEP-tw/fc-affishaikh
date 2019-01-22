@@ -5,6 +5,18 @@
   display: inline-block;
 }
 
+.commentsHeading {
+  margin-right: 40px;
+  display: inline-block;
+}
+
+.reloadButton {
+  width: 50px;
+  height: 50px;
+  font-size: 30px;
+  display: inline-block;
+}
+
 .landingPageHeading {
   text-align: right;
   padding: 10px;
@@ -40,7 +52,7 @@
 }
 
 #name {
-  margin-right : 36px;
+  margin-right: 36px;
 }
 
 #comment {

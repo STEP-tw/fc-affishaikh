@@ -2,9 +2,16 @@ const fs = require('fs');
 const app = require('./app.js');
 const Comments = require('./comments.js');
 
+const doesFileExist = path => fs.existsSync('./src/comments.json');
+
 const getStoredComments = function() {
-  const comments = fs.readFileSync('./src/comments.json', 'utf8');
-  return JSON.parse(comments);
+  let comments = [];
+  if (doesFileExist('./src/comments.json')) {
+    comments = fs.readFileSync('./src/comments.json', 'utf8');
+    return JSON.parse(comments);
+  }
+  fs.writeFileSync('./src/comments.json', JSON.stringify(comments), 'utf8');
+  return comments;
 };
 
 const comments = new Comments(getStoredComments());
@@ -72,7 +79,7 @@ const storeComment = function(comment, res) {
   fs.writeFile(
     './src/comments.json',
     JSON.stringify(comments.allComments),
-    () => {
+    err => {
       return;
     }
   );
@@ -80,19 +87,29 @@ const storeComment = function(comment, res) {
 
 const submitComment = function(req, res) {
   const comment = parse(req.body);
-  comment.date = new Date().toLocaleString();
+  comment.date = new Date().toUTCString();
   storeComment(comment, res);
   renderGuestbook(req, res);
 };
 
 const appendComments = function(guestBookHtml, comments) {
-  let appendedData = guestBookHtml;
-  for (comment of comments) {
-    appendedData += `<pre>${comment.date}    ${comment.name}    ${
+  let appendedData = guestBookHtml + comments;
+  return appendedData;
+};
+
+const insertCommentsInPreTag = function(allComments) {
+  let commentsInPreTag = '';
+  for (comment of allComments) {
+    const localDateAndTime = new Date(comment.date).toLocaleString();
+    commentsInPreTag += `<pre>${localDateAndTime}    ${comment.name}    ${
       comment.comment
     }</pre>`;
   }
-  return appendedData;
+  return commentsInPreTag;
+};
+
+const insertCommentsInDiv = function(allComments) {
+  return `<div id="Comments">${allComments}</div>`;
 };
 
 const renderGuestbook = function(req, res) {
@@ -101,14 +118,23 @@ const renderGuestbook = function(req, res) {
       sendNotFound(res);
       return;
     }
-    let appendedData = appendComments(resource, comments.allComments);
+    const commentsInPreTag = insertCommentsInPreTag(comments.allComments);
+    const commentsInDiv = insertCommentsInDiv(commentsInPreTag);
+    let appendedData = appendComments(resource, commentsInDiv);
     send(res, 200, appendedData);
     return;
   });
 };
 
+const getComments = function(req, res) {
+  const commentsInPreTag = insertCommentsInPreTag(comments.allComments);
+  res.write(commentsInPreTag);
+  res.end();
+};
+
 app.use(readBody);
 app.use(logRequest);
+app.get('/comments', getComments);
 app.get('/htmlPages/Guestbook.html', renderGuestbook);
 app.post('/htmlPages/Guestbook.html', submitComment);
 app.use(renderResource);
