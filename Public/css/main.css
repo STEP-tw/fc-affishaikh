@@ -17,6 +17,11 @@
   display: inline-block;
 }
 
+.LoginDiv {
+  border-bottom:2px solid black;
+  padding-bottom:30px;  
+}
+
 .landingPageHeading {
   text-align: right;
   padding: 10px;
@@ -46,13 +51,19 @@
   font-size: 20px;
 }
 
+button {
+  font-size: 20px;
+  margin:10px;
+}
+
 .button {
   font-size: 20px;
   margin: 10px;
 }
 
 #name {
-  margin-right: 36px;
+  margin-left: 36px;
+  display: inline;
 }
 
 #comment {

@@ -132,11 +132,18 @@ const getComments = function(req, res) {
   res.end();
 };
 
+const login = function(req, res) {
+  const resResource = `<div>${req.body}</div>`;
+  res.write(resResource);
+  res.end();
+};
+
 app.use(readBody);
 app.use(logRequest);
 app.get('/comments', getComments);
 app.get('/htmlPages/Guestbook.html', renderGuestbook);
 app.post('/htmlPages/Guestbook.html', submitComment);
+app.post('/login', login);
 app.use(renderResource);
 
 module.exports = app;
