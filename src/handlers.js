@@ -132,18 +132,49 @@ const getComments = function(req, res) {
   res.end();
 };
 
+const getCommentsInDiv = function(allComments) {
+  const commentsInPreTag = insertCommentsInPreTag(comments.allComments);
+  const commentsInDiv = insertCommentsInDiv(commentsInPreTag);
+  return commentsInDiv;
+};
+
+const insertName = function(resource, name) {
+  return resource.replace('###Name###', name);
+};
+
+const storeCookie = function(userId, name) {
+  const cookie = {};
+  cookie[userId] = name;
+  fs.writeFile('./Private/cookies.json', JSON.stringify(cookie), err => {});
+};
+
+const giveCookie = function(req, res, name) {
+  const userId = new Date().getTime();
+  res.setHeader('Set-Cookie', `userID=${userId}`);
+  storeCookie(userId, name);
+};
+
 const login = function(req, res) {
-  const resResource = `<div>${req.body}</div>`;
-  res.write(resResource);
-  res.end();
+  fs.readFile('./Public/template/profile.html', (err, resource) => {
+    if (err) {
+      sendNotFound(res);
+      return;
+    }
+    const name = parse(req.body).name;
+    giveCookie(req, res, name);
+    const profile = insertName(resource.toString(), name);
+    const commentsInDiv = getCommentsInDiv(comments.allComments);
+    let appendedData = appendComments(profile, commentsInDiv);
+    send(res, 200, appendedData);
+    return;
+  });
 };
 
 app.use(readBody);
 app.use(logRequest);
 app.get('/comments', getComments);
 app.get('/htmlPages/Guestbook.html', renderGuestbook);
-app.post('/htmlPages/Guestbook.html', submitComment);
-app.post('/login', login);
+app.post('/htmlPages/Guestbook.html', login);
 app.use(renderResource);
 
 module.exports = app;
