@@ -6,19 +6,19 @@
     <script src="/guestBook.js"></script>
   </head>
   <body>
-    <form class="LoginForm" method="POST" action="/htmlPages/Guestbook.html">
+    <h1>Login succesful!</h1>
+    <form class="LoginForm" style="border-bottom: none" method="GET" action="/logout">
       <div class="inputFieldDiv">
-        <h1>Login succesful!</h1>
         <label for="name">Name:</label>
         <p id="name" for="name">###Name###</p>
         <button>Logout</button>
       </div>
+    </form>
       <div class="inputFieldDiv">
-        <label id="comment" for="comment">Comment:</label>
+        <label for="comment">Comment:</label>
         <textarea class="inputField" name="comment" id="comment" cols="30" rows="5"></textarea>
       </div>
-      <input class="button" type="submit" value="Submit"/>
-    </form>
+      <button id="submit" class="button">Submit</button>
     <div>
       <h1 class="commentsHeading">Comments</h1>
       <button class="reloadButton" id="reloadComments">&#x21bb</button>

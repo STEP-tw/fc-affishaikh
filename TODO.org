@@ -1,0 +1,10 @@
+* DONE Render the guestBook page with comments when requested.
+* DONE Add a functionality to create the comments.json file when it doesn't exist.
+* DONE Reload only the comments when clicked on reload button.
+* DONE Don't store the Date in local string format. Display it in local string.
+* TODO Handle special characters in comments.
+* TODO Get rid of magic strings.
+* TODO Handle errors while writing comments into file.
+* TODO Can make cache of things that are not changing and requests are frequent for it.
+* TODO Can keep the templates in template directory.
+* Use the functions of comments object to add and get the comments.

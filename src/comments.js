@@ -3,10 +3,10 @@ class Comments {
     this.allComments = commentsLog;
   }
   getComments() {
-    return this.comments;
+    return this.allComments;
   }
   addComment(comment) {
-    this.comments.push(comment);
+    this.allComments.push(comment);
   }
 }
 

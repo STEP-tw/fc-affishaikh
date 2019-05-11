@@ -1,8 +1,13 @@
 const fs = require('fs');
 const app = require('./app.js');
 const Comments = require('./comments.js');
+const Cookies = require('./cookies.js');
+const Cache = require('./cache.js');
 
-const doesFileExist = path => fs.existsSync('./src/comments.json');
+const cache = new Cache();
+cache.readAllCaches();
+
+const doesFileExist = path => fs.existsSync(path);
 
 const getStoredComments = function() {
   let comments = [];
@@ -14,7 +19,18 @@ const getStoredComments = function() {
   return comments;
 };
 
+const getStoredCookies = function() {
+  let cookies = [];
+  if (doesFileExist('./Private/cookies.json')) {
+    cookies = fs.readFileSync('./Private/cookies.json', 'utf8');
+    return JSON.parse(cookies);
+  }
+  fs.writeFileSync('./Private/cookies.json', JSON.stringify(cookies), 'utf8');
+  return cookies;
+};
+
 const comments = new Comments(getStoredComments());
+const cookies = new Cookies(getStoredCookies());
 
 const readBody = function(req, res, next) {
   let data = '';
@@ -51,20 +67,18 @@ const sendNotFound = function(res) {
 
 const renderResource = function(req, res, next) {
   const resourcePath = getResourcePath(req.url);
-  fs.readFile(resourcePath, (err, resource) => {
-    if (err) {
-      sendNotFound(res);
-      return;
-    }
-    send(res, 200, resource);
+  if (cache.isCacheAvailable(resourcePath)) {
+    send(res, 200, cache.getCache(resourcePath));
     return;
-  });
+  }
+  sendNotFound(res);
+  return;
 };
 
 const reducer = function(parsedDataSoFar, keyAndValue) {
   const keyAndValueArr = keyAndValue.split('=');
   const key = keyAndValueArr[0];
-  const value = keyAndValueArr[1].replace(/[+]+/g, ' ');
+  const value = unescape(keyAndValueArr[1]).replace(/[+]+/g, ' ');
   parsedDataSoFar[key] = value;
   return parsedDataSoFar;
 };
@@ -86,10 +100,10 @@ const storeComment = function(comment, res) {
 };
 
 const submitComment = function(req, res) {
-  const comment = parse(req.body);
+  const comment = JSON.parse(req.body);
   comment.date = new Date().toUTCString();
   storeComment(comment, res);
-  renderGuestbook(req, res);
+  send(res, 200, '');
 };
 
 const appendComments = function(guestBookHtml, comments) {
@@ -113,17 +127,37 @@ const insertCommentsInDiv = function(allComments) {
 };
 
 const renderGuestbook = function(req, res) {
-  fs.readFile('./Public/htmlPages/Guestbook.html', (err, resource) => {
-    if (err) {
-      sendNotFound(res);
+  if (req.headers.cookie && cookies.includes(req.headers.cookie)) {
+    fs.readFile('./Public/template/profile.html', (err, resource) => {
+      if (err) {
+        sendNotFound(res);
+        return;
+      }
+      const name = cookies.getUserName(req.headers.cookie);
+      const profile = replacePlaceHolder(
+        resource.toString(),
+        '###Name###',
+        name
+      );
+      const commentsInPreTag = insertCommentsInPreTag(comments.allComments);
+      const commentsInDiv = insertCommentsInDiv(commentsInPreTag);
+      let appendedData = appendComments(profile, commentsInDiv);
+      send(res, 200, appendedData);
       return;
-    }
-    const commentsInPreTag = insertCommentsInPreTag(comments.allComments);
-    const commentsInDiv = insertCommentsInDiv(commentsInPreTag);
-    let appendedData = appendComments(resource, commentsInDiv);
-    send(res, 200, appendedData);
-    return;
-  });
+    });
+  } else {
+    fs.readFile('./Public/htmlPages/Guestbook.html', (err, resource) => {
+      if (err) {
+        sendNotFound(res);
+        return;
+      }
+      const commentsInPreTag = insertCommentsInPreTag(comments.allComments);
+      const commentsInDiv = insertCommentsInDiv(commentsInPreTag);
+      let appendedData = appendComments(resource, commentsInDiv);
+      send(res, 200, appendedData);
+      return;
+    });
+  }
 };
 
 const getComments = function(req, res) {
@@ -138,42 +172,61 @@ const getCommentsInDiv = function(allComments) {
   return commentsInDiv;
 };
 
-const insertName = function(resource, name) {
-  return resource.replace('###Name###', name);
+const replacePlaceHolder = function(resource, placeHolder, newPlaceHolder) {
+  return resource.replace(placeHolder, newPlaceHolder);
 };
 
 const storeCookie = function(userId, name) {
   const cookie = {};
   cookie[userId] = name;
-  fs.writeFile('./Private/cookies.json', JSON.stringify(cookie), err => {});
+  cookies.addCookie(cookie);
+  fs.writeFile(
+    './Private/cookies.json',
+    JSON.stringify(cookies.getCookies()),
+    err => {}
+  );
 };
 
-const giveCookie = function(req, res, name) {
+const setCookie = function(res, name) {
   const userId = new Date().getTime();
-  res.setHeader('Set-Cookie', `userID=${userId}`);
+  res.setHeader('Set-Cookie', `userID=${userId}; path=/`);
   storeCookie(userId, name);
 };
 
 const login = function(req, res) {
-  fs.readFile('./Public/template/profile.html', (err, resource) => {
-    if (err) {
-      sendNotFound(res);
-      return;
-    }
-    const name = parse(req.body).name;
-    giveCookie(req, res, name);
-    const profile = insertName(resource.toString(), name);
-    const commentsInDiv = getCommentsInDiv(comments.allComments);
-    let appendedData = appendComments(profile, commentsInDiv);
-    send(res, 200, appendedData);
-    return;
-  });
+  const profileTemp = cache.getCache('./Public/template/profile.html');
+  const name = parse(req.body).name;
+  setCookie(res, name);
+  const profile = replacePlaceHolder(
+    profileTemp.toString(),
+    '###Name###',
+    name
+  );
+  const commentsInDiv = getCommentsInDiv(comments.allComments);
+  let appendedData = appendComments(profile, commentsInDiv);
+  send(res, 200, appendedData);
+  return;
+};
+
+const logout = function(req, res) {
+  const userId = req.headers.cookie.split('=')[1];
+  cookies.deleteCookie(userId);
+  fs.writeFile(
+    './Private/cookies.json',
+    JSON.stringify(cookies.getCookies()),
+    err => {}
+  );
+  res.statusCode = 302;
+  res.setHeader('location', '/htmlPages/Guestbook.html');
+  res.end();
 };
 
 app.use(readBody);
 app.use(logRequest);
+app.get('/logout?', logout);
 app.get('/comments', getComments);
 app.get('/htmlPages/Guestbook.html', renderGuestbook);
+app.post('/submitComment', submitComment);
 app.post('/htmlPages/Guestbook.html', login);
 app.use(renderResource);
 
